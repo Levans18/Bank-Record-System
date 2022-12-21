@@ -8,7 +8,7 @@ A basic Bank Record System made with c++ in the command line. The project uses [
   2. Deposit Funds
   3. Withdraw Funds
   4. Balance Enquiry
-  5. All Accounts
+  5. Query All Accounts
   6. Close an Account
   7. Modify an Account
   8. Exit

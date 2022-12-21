@@ -14,10 +14,10 @@ int main(int argc, char **argv){
     std::ifstream bankSIn("bankStorage.json");
     json bankSParsed;
 
-    /* If there is a file:
-      print returning welcome and parse JSON */
-    /* otherwise:
-      print basic welcome */
+    /* If there is a file: */
+    /* print returning welcome and parse JSON */
+    /* otherwise: */
+    /* print basic welcome */
     if(bankSIn.is_open()){
         bankSParsed = json::parse(bankSIn);
         cout << "*****************************" << endl;
@@ -90,14 +90,6 @@ int main(int argc, char **argv){
     cout << "Thank You For Visiting Bit Bank!" << endl;
 }
 
-
-class BankUser{
-    private:
-
-    public:
-        BankUser();
-        BankUser(json bankS);
-};
     // string isNewUser;
     // string username;
     // string password;
