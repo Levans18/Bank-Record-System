@@ -21,7 +21,9 @@ void ConvertToMoney(double &input){
 
 /* AccNumGetter */
 /* Get and Validate users account numbers they enter */
-/* @AccountNumber - */
+/* @AccountNumber - where user input for account number is stored */
+/* @user - BankUser that gives the length of the account */
+/* @userQ - Question to ask the user */
 void AccNumGetter(int &accountNumber, BankUser &user, std::string &userQ){
     bool validInput = false;
     cout << userQ << endl;
@@ -40,6 +42,10 @@ void AccNumGetter(int &accountNumber, BankUser &user, std::string &userQ){
     }
 }
 
+/* FundGetter */
+/* Get and validate funds input */
+/* @fund - Where funds user input is stored */
+/* @fundQ - Question to ask the user */
 void FundGetter(double &fund, std::string &fundQ){
     bool validInput = false;
     while(!validInput){
