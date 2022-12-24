@@ -13,3 +13,6 @@ A basic Bank Record System made with c++ in the command line. The project uses [
   7. Modify an Account
   8. Exit
   
+  ## How To Run 
+   * Compile -> $ Make
+   * Run -> $ Make Run

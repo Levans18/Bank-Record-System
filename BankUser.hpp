@@ -17,16 +17,17 @@ class BankUser{
         json bankS;
     public:
         BankUser() noexcept;
-        BankUser(const json &oldBankS) noexcept;
         ~BankUser() noexcept;
-        void NewAccount(const std::string &accountName);
-        void DepositFunds(const std::string &accountName, const double amount) noexcept;
-        void WithdrawFunds(const std::string &accountName, const int amount) noexcept;
-        constexpr double BalanceInquiry(const std::string &accountName) noexcept;
-        constexpr accountList AllAccounts() noexcept;
-        void CloseAccount(const std::string &accountName) noexcept;
-        void ModifyAccount(const std::string &newName) noexcept;
+        void ReturningUser(json &oldBankS) noexcept;
+        void NewAccount(const std::string &accountName, const double &startingBalance) noexcept;
+        void DepositFunds(const int &accountNumber, const double amount) noexcept;
+        void WithdrawFunds(const int &accountNumber, const double amount) noexcept;
+        void BalanceInquiry(const int &accountNumber) noexcept;
+        void AllAccounts() noexcept;
+        void CloseAccount(const int &accountNumber) noexcept;
+        void ModifyAccount(const int &accountNumber,const std::string &newName) noexcept;
+        void UpdateJson() noexcept;
+        int NumAccounts() noexcept;
 };
-
 
 #endif

@@ -1,16 +1,8 @@
 {
     "accounts": [
         {
-            "money": 2,
-            "name": "newAccount"
-        },
-        {
-            "money": 2,
-            "name": "newAccount"
-        },
-        {
-            "money": 2,
-            "name": "newAccount"
+            "balance": 506.25,
+            "name": "GoobertMcScoobert2020"
         }
     ]
 }

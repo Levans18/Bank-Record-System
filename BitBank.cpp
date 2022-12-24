@@ -1,28 +1,82 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <stdlib.h>
 #include <cctype>
 #include <string>
+#include <type_traits>
 #include "json.hpp"
+#include "BankUser.hpp"
 
 using json = nlohmann::json;
+using std::cout, std::cin, std::endl;
+
+/* ConvertToMoney */
+/* Changes the double entered into money format */
+/* by rounding to the second decimal place */
+/* @input-The double to be changed*/
+void ConvertToMoney(double &input){
+    input = std::ceil(input * 100.0) / 100.0;
+}
+
+/* AccNumGetter */
+/* Get and Validate users account numbers they enter */
+/* @AccountNumber - */
+void AccNumGetter(int &accountNumber, BankUser &user, std::string &userQ){
+    bool validInput = false;
+    cout << userQ << endl;
+    user.AllAccounts();
+    while(!validInput){
+        cout << ">> ";
+        int numAccounts = user.NumAccounts();
+        if (cin >> accountNumber 
+            && (0 < accountNumber && accountNumber < numAccounts+1)) {
+            validInput = true;
+        } else {
+            cout << "invalid input enter an integer between 0 and " << numAccounts+1 << "\n";
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }
+}
+
+void FundGetter(double &fund, std::string &fundQ){
+    bool validInput = false;
+    while(!validInput){
+        cout << fundQ << endl;
+        cout << ">> ";
+        if (cin >> fund) {
+            validInput = true;;
+        } else {
+            cout << "invalid input\n";
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }
+    ConvertToMoney(fund);
+}
 
 int main(int argc, char **argv){
-    using std::cout, std::cin, std::endl;
+    std::string accountName, accQ, fundQ;
+    double startingBalance, fund;
+    int accountNumber;
+    bool validInput;
+    json bankSParsed;
 
     /* Open bank storage json file */
     std::ifstream bankSIn("bankStorage.json");
-    json bankSParsed;
 
     /* If there is a file: */
     /* print returning welcome and parse JSON */
     /* otherwise: */
     /* print basic welcome */
+    BankUser *user = new BankUser();
     if(bankSIn.is_open()){
-        bankSParsed = json::parse(bankSIn);
         cout << "*****************************" << endl;
         cout << "* Welcome Back to Bit Bank™ *" << endl;
         cout << "*****************************" << endl;
+        bankSParsed = json::parse(bankSIn);
+        user->ReturningUser(bankSParsed);
     }else{
         cout << "************************" << endl;
         cout << "* Welcome to Bit Bank™ *" << endl;
@@ -31,7 +85,7 @@ int main(int argc, char **argv){
     bankSIn.close();
 
     auto userInput = 0;
-    while(userInput != 7){
+    while(userInput != 8){
         /*User Input Options*/
         cout << "Enter a command number:" << endl;
         cout << "1. Create a new Account" << endl;
@@ -39,84 +93,87 @@ int main(int argc, char **argv){
         cout << "3. Withdraw Funds" << endl;
         cout << "4. Balance Enquiry" << endl;
         cout << "5. All Accounts" << endl;
-        cout << "6. Manage Accounts" << endl;
-        cout << "7. Exit" << endl;
+        cout << "6. Close Account" << endl;
+        cout << "7. Manage Accounts" << endl;
+        cout << "8. Exit" << endl;
 
         /*User Input*/
         cout << ">> ";
         cin >> userInput;
-
+        validInput = false;
 
         /*User Input Cases*/
         switch (userInput)
         {
-        case 1:
+        case 1 /* New Account */:
+            cout << "New Account Name: ";
+            cin >>  accountName;
 
+            fundQ = "Accounts Starting Balance: ";
+            FundGetter(startingBalance, fundQ);
+
+            user->NewAccount(accountName, startingBalance);
             break;
         
-        case 2:
-            break;
-        
-        case 3: 
+        case 2 /* Deposit Funds */:
+            accQ = "Which Account to Deposit?";
+            AccNumGetter(accountNumber, (*user), accQ);
+
+            fundQ = "How Much to Deposit?";
+            FundGetter(fund, fundQ);
+
+            user->DepositFunds(accountNumber-1,fund);
             break;
 
-        case 4: 
+        case 3 /* Withdraw Funds*/: 
+            accQ = "Which Account to Withdraw From?";
+            AccNumGetter(accountNumber, (*user), accQ);
+
+            fundQ = "How Much Would You Like to Withdraw?";
+            FundGetter(fund, fundQ);
+            
+            user->WithdrawFunds(accountNumber-1, fund);
             break;
 
-        case 5: 
+        case 4 /* Balance Enquiry */: 
+            accQ = "Which Accounts Balance?";
+            AccNumGetter(accountNumber, (*user), accQ);
+
+            user->BalanceInquiry(accountNumber-1);
+            break;
+
+        case 5 /* All Accounts */: 
+            cout << "All Accounts: ";
+            user->AllAccounts(); 
             break;
         
-        case 6:
+        case 6 /* Close Account */ :
+            accQ = "Which Account to Close?";
+            AccNumGetter(accountNumber,(*user), accQ);
+
+            user->CloseAccount(accountNumber-1);
+            break;
+
+        case 7 /* Manage Accounts */:
+            accQ = "Which Account to Manage?";
+            AccNumGetter(accountNumber,(*user), accQ);
+
+            cout << "New Account Name: ";
+            cout << ">> ";
+            cin >> accountName;
+
+            user->ModifyAccount(accountNumber, accountName);
             break;
         
-        case 7: 
+        case 8 /* Exit */: 
             break;
 
         default:
+            cout << "Select A Command 1-8" << endl;
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             break;
         }
-
     }
-
-    json Account;
-    Account["name"] = "newAccount";
-    Account["money"] = 2;
-    bankSParsed["accounts"].push_back(Account);
-
-    std::ofstream bankSOut("bankStorage.json");
-    bankSOut << std::setw(4) << bankSParsed << endl;
-
-
     cout << "Thank You For Visiting Bit Bank!" << endl;
 }
-
-    // string isNewUser;
-    // string username;
-    // string password;
-    // std::cout << "are you a returning user? (y or n) " << std::endl;
-
-    // bool goodInput = false;
-    // while(!goodInput){
-    //     std::cin >> isNewUser;
-    //     if(isNewUser.toLower() == "y"){
-    //         goodInput = newUser(username, password);
-    //     }else if(isNewUser.lower() == "n"){
-    //         goodInput = returningUser(username, password);
-    //     }else{
-    //         std::cout << "*** Invalid Response use (y or n) ***";
-    //     }
-    // }
-    // std::cout << "Username: ";
-    // std::cin >> username;
-    // std::cout << "Password: ";
-    // std::cin >> password;
-    // std::cout << username << std::endl;
-
-
-// bool newUser(std::string &username, std::string &password){
-
-// }
-
-// bool returningUser(std::string &username, std::string &password){
-
-// }
